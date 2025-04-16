@@ -3,14 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <title>網站目錄</title>
+    <!-- 引入 Font Awesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #f0e4ff, #d4f1f4); /* 柔和奇幻漸層色 */
+            font-family: "Segoe UI", "微軟正黑體", sans-serif;
+            padding: 50px;
+        }
+
+        h1 {
+            color: #6a4fbf;
+            text-shadow: 1px 1px 2px #c5a3ff;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            max-width: 300px;
+            margin: 30px auto;
+        }
+
+        li {
+            background-color: #ffffffcc;
+            border-radius: 10px;
+            margin: 10px 0;
+            padding: 12px 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+
+        li:hover {
+            transform: scale(1.03);
+            background-color: #f0f8ff;
+        }
+
+        a {
+            text-decoration: none;
+            color: #444;
+        }
+
+        i {
+            margin-right: 10px;
+            color: #7c5dfa;
+        }
+    </style>
 </head>
 <body>
-    <h1>Selina網站</h1>
+    <h1 style="text-align:center"><em><strong>Selina個人網站</strong></em></h1>
     <ul>
-        <li><a href="info0412.html">奇幻世界</a></li>
-        <li><a href="testtalk.html">聊天室</a></li>
-        <li><a href="testgame.html">小遊戲1</a></li>
-        <li><a href="testvideo.html">看影片</a></li>
+        <li><a href="info0412.html"><i class="fas fa-hat-wizard"></i>奇幻世界</a></li>
+        <li><a href="testtalk.html"><i class="fas fa-comments"></i>聊天室</a></li>
+        <li><a href="testgame.html"><i class="fas fa-gamepad"></i>小遊戲1</a></li>
+        <li><a href="testvideo.html"><i class="fas fa-video"></i>看影片</a></li>
     </ul>
 </body>
 </html>
