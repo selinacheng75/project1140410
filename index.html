@@ -2,61 +2,106 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>網站目錄</title>
+    <title>Selina的魔法網站</title>
     <!-- 引入 Font Awesome 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(to right, #f0e4ff, #d4f1f4); /* 柔和奇幻漸層色 */
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
             font-family: "Segoe UI", "微軟正黑體", sans-serif;
+            margin: 0;
             padding: 50px;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: #ffffffcc;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: floatBox 3s ease-in-out infinite;
+        }
+
+        @keyframes floatBox {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         h1 {
             color: #6a4fbf;
-            text-shadow: 1px 1px 2px #c5a3ff;
+            font-size: 34px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #c5a3ff, 0 0 20px #ffffff;
+            animation: glow 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #c5a3ff, 0 0 10px #ffffff;
+            }
+            to {
+                text-shadow: 0 0 15px #a68cff, 0 0 30px #ffffff;
+            }
         }
 
         ul {
             list-style: none;
             padding: 0;
-            max-width: 300px;
-            margin: 30px auto;
+            margin: 0;
         }
 
         li {
-            background-color: #ffffffcc;
-            border-radius: 10px;
-            margin: 10px 0;
-            padding: 12px 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            font-size: 18px;
-            transition: transform 0.2s;
+            background-color: #ffffffee;
+            border-radius: 12px;
+            margin: 15px 0;
+            padding: 15px 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            font-size: 20px;
+            transition: transform 0.3s, background-color 0.3s;
+            text-shadow: 1px 1px 2px #d1c4e9, -1px -1px 1px #ffffff;
         }
 
         li:hover {
-            transform: scale(1.03);
+            transform: translateY(-5px);
             background-color: #f0f8ff;
         }
 
         a {
             text-decoration: none;
             color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         i {
             margin-right: 10px;
             color: #7c5dfa;
+            font-size: 22px;
+            animation: floatIcon 4s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
         }
     </style>
 </head>
 <body>
-    <h1 style="text-align:center"><em><strong>Selina個人網站</strong></em></h1>
-    <ul>
-        <li><a href="info0412.html"><i class="fas fa-hat-wizard"></i>奇幻世界</a></li>
-        <li><a href="testtalk.html"><i class="fas fa-comments"></i>聊天室</a></li>
-        <li><a href="testgame.html"><i class="fas fa-gamepad"></i>小遊戲1</a></li>
-        <li><a href="testvideo.html"><i class="fas fa-video"></i>看影片</a></li>
-    </ul>
+    <div class="container">
+        <h1><em><strong>Selina的魔法網站</strong></em></h1>
+        <ul>
+            <li><a href="info0412.html"><i class="fas fa-hat-wizard"></i>奇幻世界</a></li>
+            <li><a href="testtalk.html"><i class="fas fa-comments"></i>聊天天地</a></li>
+            <li><a href="testgame.html"><i class="fas fa-gamepad"></i>遊戲包廂</a></li>
+            <li><a href="testvideo.html"><i class="fas fa-video"></i>熱門影片</a></li>
+        </ul>
+    </div>
 </body>
 </html>
