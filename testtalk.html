@@ -4,40 +4,66 @@
     <meta charset="UTF-8">
     <title>小聊天室</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-        }
-        #messages {
-            border: 1px solid #ccc;
-            height: 300px;
-            overflow-y: scroll;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+        background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+    }
+    #messages {
+        border: 2px solid #555;
+        height: 300px;
+        overflow-y: scroll;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #ffffffaa;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    #username, #input {
+        width: 20%;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #aaa;
+        border-radius: 5px;
+    }
+    button {
+        padding: 8px 16px;
+        border: none;
+        background-color: #6c5ce7;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 15px;
+    }
+
+    button:hover {
+        background-color: #5a4db3;
+    }
     </style>
 </head>
 <body>
 
-
-    <h1>簡易聊天室</h1>
-
+    <h1>聊天天地</h1>
 
     <div>
-        名字：<input type="text" id="username" placeholder="輸入你的名字">
+        <div>
+            名字：<input type="text" id="username" placeholder="輸入你的名字">
+        </div>
+        <div>
+            訊息：<input type="text" id="input" placeholder="輸入訊息...">
+        </div>
+        <div>
+            <button onclick="sendMessage()">送出</button>
+        </div>
     </div>
+
     <div id="messages"></div>
-
-
-    <input type="text" id="input" placeholder="輸入訊息...">
-    <button onclick="sendMessage()">送出</button>
-
 
     <script>
         const messages = document.getElementById('messages');
         const input = document.getElementById('input');
         const username = document.getElementById('username');
-
 
         function sendMessage() {
             if (input.value.trim() === '' || username.value.trim() === '') {
@@ -53,8 +79,5 @@
         }
     </script>
 
-
 </body>
 </html>
-
-
