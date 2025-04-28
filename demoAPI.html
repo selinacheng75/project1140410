@@ -48,6 +48,7 @@
 
           // 清空載入中提示
           weatherList.innerHTML = '';
+          weatherList.textContent = data.records.location[1].locationName;
 
 
           // 顯示每個地區的天氣簡述 (第一時段)
@@ -64,12 +65,13 @@
             // 取第一個 time 節點的天氣現象與舒適度
             const t = loc.weatherElement.find(e => e.elementName === 'CI');
             const h = loc.weatherElement.find(e => e.elementName === 'PoP');
+            const i = loc.weatherElement.find(e => e.elementName === 'MinT');
             const CI = t && t.time && t.time[0] ? t.time[0].parameter.parameterName : '—';
             const PoP = h && h.time && h.time[0] ? h.time[0].parameter.parameterName : '—';
-
+            const MinT = i && i.time && i.time[0] ? i.time[0].parameter.parameterName : '—';
 
             const p = document.createElement('p');
-            p.textContent = `舒適度：${CI}；降雨機率：${PoP}`;
+            p.textContent = `舒適度：${CI}；降雨機率：${PoP}；最低溫：${MinT}°C`;
             item.appendChild(p);
 
 
