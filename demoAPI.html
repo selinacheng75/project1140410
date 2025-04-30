@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+  <div id="mymessage"></div>
   <head>
     <meta charset="UTF-8" />
     <title>天氣預報 (36 小時)</title>
@@ -84,6 +85,23 @@
 
 
       loadWeather();
+
+      const apiUrl2 = 'http://localhost:8000/api/hello';
+      const mymessage =document.getElementById('mymessage');
+      async function loadMessage() {
+        try {
+          const resp = await fetch(apiUrl2); //GET
+          if (!resp.ok) throw new Error('HTTP 錯誤:'+resp.status);
+          const data =  await resp.text();
+          if (!data) {
+            weatherList.textContent = '未取得任何資料';
+            return;
+          }
+          mymessage.textContent = data;
+        }catch(err) {
+          mymessage.textContent = '載入失敗：' + err.message;
+        }
+      }
     </script>
   </body>
 </html>
