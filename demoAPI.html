@@ -1,91 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <div id="mymessage"></div>
   <head>
-    <meta charset="UTF-8" />
     <title>天氣預報 (36 小時)</title>
   </head>
-  <style>
-    body {
-        text-align: center;
-        margin-top: 50px;
-        font-family: Arial, sans-serif;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
-    }
-    iframe {
-        width: 560px;
-        height: 315px;
-        border: none;
-    }
-</style>
   <body>
-    <div class="container">
+    <div>
+      <div id="mymessage"></div>
       <h1>未來 36 小時各區天氣預報</h1>
       <div id="weatherList">載入中…</div>
-      <div class="btn-container">
-        <a class="btn" href="javascript:history.back()">上一頁</a>
-        <a class="btn" href="index.html">回首頁</a>
-      </div>
+      
     </div>
-
-
-    <script>
-      const apiUrl = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-FE4AD205-4642-40AD-B7FD-336A53D1ED2A';
-      const weatherList = document.getElementById('weatherList');
-
-
-      async function loadWeather() {
-        try {
-          const resp = await fetch(apiUrl); //get
-          if (!resp.ok) throw new Error(`HTTP 錯誤：${resp.status}`);
-          const data = await resp.json();
-          const locations = data.records.location;
-          if (!locations || !locations.length) {
-            weatherList.textContent = '未取得任何天氣資料';
-            return;
-          }
-
-
-          // 清空載入中提示
-          weatherList.innerHTML = '';
-          weatherList.textContent = data.records.location[1].locationName;
-
-
-          // 顯示每個地區的天氣簡述 (第一時段)
-          locations.forEach(loc => {
-            const item = document.createElement('div');
-            item.className = 'weather-item';
-
-
-            const area = document.createElement('h3');
-            area.textContent = loc.locationName;
-            item.appendChild(area);
-
-
-            // 取第一個 time 節點的天氣現象與舒適度
-            const t = loc.weatherElement.find(e => e.elementName === 'CI');
-            const h = loc.weatherElement.find(e => e.elementName === 'PoP');
-            const i = loc.weatherElement.find(e => e.elementName === 'MinT');
-            const CI = t && t.time && t.time[0] ? t.time[0].parameter.parameterName : '—';
-            const PoP = h && h.time && h.time[0] ? h.time[0].parameter.parameterName : '—';
-            const MinT = i && i.time && i.time[0] ? i.time[0].parameter.parameterName : '—';
-
-            const p = document.createElement('p');
-            p.textContent = `舒適度：${CI}；降雨機率：${PoP}；最低溫：${MinT}°C`;
-            item.appendChild(p);
-
-
-            weatherList.appendChild(item);
-          });
-        } catch (err) {
-          weatherList.textContent = '載入失敗：' + err.message;
-        }
-      }
-
-
-      loadWeather();
-
+    <script> //url要改
       const apiUrl2 = 'http://localhost:8000/api/hello';
       const mymessage =document.getElementById('mymessage');
       async function loadMessage() {
@@ -102,6 +27,7 @@
           mymessage.textContent = '載入失敗：' + err.message;
         }
       }
+      loadMessage()
     </script>
   </body>
 </html>
