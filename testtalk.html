@@ -47,37 +47,81 @@
     <h1>聊天天地</h1>
 
     <div>
-        <div>
-            名字：<input type="text" id="username" placeholder="輸入你的名字">
-        </div>
-        <div>
-            訊息：<input type="text" id="input" placeholder="輸入訊息...">
-        </div>
-        <div>
-            <button onclick="sendMessage()">送出</button>
-        </div>
+      名字：<input type="text" id="username" placeholder="輸入你的名字">
     </div>
-
+    <div>
+      訊息：<input type="text" id="input" placeholder="輸入訊息...">
+      <button class="send-btn" onclick="sendMessage()">送出</button>
+    </div>
     <div id="messages"></div>
+    <div class="btn-container">
+      <a class="btn" href="javascript:history.back()">上一頁</a>
+      <a class="btn" href="index.html">回首頁</a>
+    </div>
+  </div>
+  <script>
+    const messages = document.getElementById('messages');
+    const input = document.getElementById('input');
+    const username = document.getElementById('username');
 
-    <script>
-        const messages = document.getElementById('messages');
-        const input = document.getElementById('input');
-        const username = document.getElementById('username');
 
-        function sendMessage() {
-            if (input.value.trim() === '' || username.value.trim() === '') {
-                alert('請輸入名字和訊息！');
-                return;
-            }
-            const msg = `<b>${username.value}：</b> ${input.value}`;
-            const div = document.createElement('div');
-            div.innerHTML = msg;
-            messages.appendChild(div);
-            input.value = '';
-            messages.scrollTop = messages.scrollHeight; // 自動捲到最下面
-        }
-    </script>
+    const apiBase = 'http://localhost:8000'; // ✅ <--- 請改成你的 ngrok 網址
+
+
+    function sendMessage() {
+      const name = username.value.trim();
+      const text = input.value.trim();
+      if (!name || !text) {
+        alert("請輸入名字和訊息！");
+        return;
+      }
+
+
+      fetch(`${apiBase}/chat/send`, {
+        method: 'POST',
+        mode: 'cors', // ✅ 很關鍵
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: name, message: text })
+      })
+        .then(() => {
+          input.value = '';
+          loadMessages();
+        })
+        .catch(err => {
+          console.error("送出失敗", err);
+        });
+    }
+
+
+    async function loadMessages() {
+      try {
+         const resp = await fetch(`${apiBase}/chat/messages`, {
+          method: 'GET', // 或 POST 之類
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
+        });
+        const data = await resp.json();
+        messages.innerHTML = '';
+        data.forEach(msg => {
+          const div = document.createElement('div');
+          div.innerHTML = `<b>${msg.name}</b> (${msg.time})：${msg.message}`;
+          messages.appendChild(div);
+        });
+        messages.scrollTop = messages.scrollHeight;
+      } catch (err) {
+        messages.innerHTML = '<i>載入失敗</i>' + err;
+        console.error("載入訊息錯誤：", err); 0
+      }
+    }
+
+
+    setInterval(loadMessages, 500);
+    loadMessages();
+  </script>
+
 
 </body>
 </html>

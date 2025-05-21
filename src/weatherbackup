@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>資料查詢</title>
+  <style>
+    .hidden {
+      display: none;
+    }
+    .tab-btn {
+      margin-right: 10px;
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #0078D4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    .tab-btn-group {
+      text-align: left;
+      margin-bottom: 20px;
+      padding: 0;
+    }
+    body {
+      background: linear-gradient(to bottom,#d0f0ff, #ffe0f7);
+      color: #4b0082;
+      font-family: 'Papyrus', fantasy;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 3em;
+      color: #ff69b4;
+      text-align: left;
+    }
+    h2 {
+      font-size: 2em;
+      color: #980780;
+      text-align: left;
+    }
+    select {
+      font-size: 1.2em;
+      margin: 20px;
+      padding: 5px 10px;
+    }
+    .weather-item {
+      background-color: rgba(255, 255, 255, 0.6);
+      border-radius: 15px;
+      padding: 30px;
+      margin-top: 30px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+    .btn-container {
+      margin-top: 30px;
+    }
+    .btn {
+      text-decoration: none;
+      color: white;
+      background-color: #800080;
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin: 5px;
+      font-size: 1.1em;
+    }
+    table {
+      border-collapse: collapse;
+      width: 70%;
+      margin-top: 10px;
+    }
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background-color: #992bc4;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>資料表切換展示</h1>
+  <div>
+    <button class="tab-btn" onclick="loadTable(apiattendance, container1);">出勤資料</button>
+    <button class="tab-btn" onclick="loadTable(apibooks, container1);">書本資料</button>
+    <button class="tab-btn" onclick="loadTable(apibooktype, container1);">書籍種類</button>
+    <button class="tab-btn" onclick="loadTable(apiempoloyees, container1);">員工資料</button>
+    <button class="tab-btn" onclick="loadTable(apimembers, container1);">會員資料</button>
+  </div>
+  <div>
+    <div id="tableContainer">載入中…</div>
+  </div>
+
+  <h1>未來 36 小時各區天氣預報</h1>
+
+  <label for="locationSelect">選擇地區：</label>
+  <select id="locationSelect">
+    <option value="">請選擇地區</option>
+  </select>
+
+  <div id="weatherList">請選擇地區以顯示天氣資料</div>
+
+  <div class="btn-container">
+    <a class="btn" href="javascript:history.back()">上一頁</a>
+    <a class="btn" href="index.html">回首頁</a>
+  </div>
+
+  <script>
+    const apiattendance = 'http://localhost:8000/api/attendance';
+    const apibooks = 'http://localhost:8000/api/books';
+    const apibooktype = 'http://localhost:8000/api/booktype';
+    const apiempoloyees = 'http://localhost:8000/api/empoloyees';
+    const apimembers = 'http://localhost:8000/api/members';
+    const container1 = document.getElementById('tableContainer');
+
+    const apiUrl = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWA-4E72CD48-6217-4442-A68A-581F0E228049&format=JSON';
+    const weatherList = document.getElementById('weatherList');
+    const locationSelect = document.getElementById('locationSelect');
+    let locations = [];
+
+    async function loadWeather() {
+      try {
+        const resp = await fetch(apiUrl);
+        if (!resp.ok) throw new Error(`HTTP 錯誤：${resp.status}`);
+        const data = await resp.json();
+        locations = data.records.location;
+
+        // 產生選項
+        locations.forEach((loc, index) => {
+          const option = document.createElement('option');
+          option.value = index;
+          option.textContent = loc.locationName;
+          locationSelect.appendChild(option);
+        });
+      } catch (err) {
+        weatherList.textContent = '載入失敗：' + err.message;
+      }
+    }
+
+    locationSelect.addEventListener('change', () => {
+      const index = locationSelect.value;
+      if (index === '') {
+        weatherList.textContent = '請選擇地區以顯示天氣資料';
+        return;
+      }
+
+      const loc = locations[index];
+      weatherList.innerHTML = '';
+
+      const wx = loc.weatherElement.find(e => e.elementName === 'Wx');
+      const pop = loc.weatherElement.find(e => e.elementName === 'PoP');
+      const minT = loc.weatherElement.find(e => e.elementName === 'MinT');
+      const maxT = loc.weatherElement.find(e => e.elementName === 'MaxT');
+
+      for (let i = 0; i < 3; i++) {
+        const item = document.createElement('div');
+        item.className = 'weather-item';
+
+        const title = document.createElement('h2');
+        title.textContent = `${loc.locationName}（時段 ${i + 1}）`;
+        item.appendChild(title);
+
+        const w = wx?.time?.[i]?.parameter?.parameterName || '—';
+        const r = pop?.time?.[i]?.parameter?.parameterName || '—';
+        const tMin = minT?.time?.[i]?.parameter?.parameterName || '—';
+        const tMax = maxT?.time?.[i]?.parameter?.parameterName || '—';
+
+        const content = `
+          天氣：${w}、
+          降雨機率：${r}%、
+          溫度：${tMin}°C - ${tMax}°C
+        `;
+        const p = document.createElement('p');
+        p.textContent = content;
+        item.appendChild(p);
+        weatherList.appendChild(item);
+      }
+    });
+
+    loadWeather();
+    const container = document.getElementById('tableContainer');
+    const container2 = document.getElementById('tableContainer2');
+    const container3 = document.getElementById('tableContainer3');
+
+    async function loadTable(url, todiv) {
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`HTTP 錯誤: ${resp.status}`);
+        const data = await resp.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          container.textContent = '沒有資料';
+          return;
+        }
+        // 產生表格
+        let table = '<table><thead><tr>';
+        // 自動產出表頭
+        const keys = Object.keys(data[0]);
+        keys.forEach(k => {
+          table += `<th>${k}</th>`;
+        });
+        table += '</tr></thead><tbody>';
+        // 每一列資料
+        data.forEach(row => {
+          table += '<tr>';
+          keys.forEach(k => {
+            table += `<td>${row[k]}</td>`;
+          });
+          table += '</tr>';
+        });
+        table += '</tbody></table>';
+        todiv.innerHTML = table;
+      } catch (err) {
+        todiv.textContent = '載入失敗：' + err.message;
+      }
+    }
+
+  </script>
+</body>
+</html>

@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 public class DBConnect{
    // MySQL 連線資訊
    private static final String URL = "jdbc:mysql://localhost:3306/booksystem";
@@ -53,6 +55,29 @@ public class DBConnect{
            throw new RuntimeException("⚠️ 資料更新失敗：" + e.getMessage(), e);
        }
    }
+
+    public static int getNextId(String tableName, String columnName) {
+        try (ResultSet rs = DBConnect.selectQuery("SELECT MAX(" + columnName + ") FROM " + tableName)) {
+            if (rs.next()) {
+                return rs.getInt(1) + 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+    // ✅ 超簡易 JSON parser（只支援平面 key-value）
+    public static Map<String, String> parseJson(String json) {
+        Map<String, String> map = new HashMap<>();
+        json = json.trim().replaceAll("[{}\"]", "");
+        for (String pair : json.split(",")) {
+            String[] kv = pair.split(":", 2);
+            if (kv.length == 2)
+                map.put(kv[0].trim(), kv[1].trim());
+        }
+        return map;
+    }
+    
    public static void main(String[] args) {
        // 測試 SELECT 查詢
        try (ResultSet rs = selectQuery("SELECT * FROM members")) {

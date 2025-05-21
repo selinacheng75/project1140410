@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>Practice 回應</title>
+</head>
+<body>
+
+    <script>
+    fetch(`http://localhost:8000/practice`, {
+        method: 'GET',
+        mode: 'cors',
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("responseBox").textContent = data;
+    })
+    .catch(error => {
+        document.getElementById("responseBox").textContent = "錯誤：" + error;
+    });
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body> 
+    <button onclick="getdemo()">getDemo</button>
+    
+    <script>
+    fetch(`http://localhost:8000/postdemo`, {
+        method: 'POST',
+        mode: 'cors', // ✅ 很關鍵
+        body: 'Hello World!!!!!!!!!!!!!!!!!!!!!!!!'
+    })
+    function getdemo(){
+        fetch("http://localhost:8000/getdemo").then(msg =>msg.text()).then(text => alert(text))
+    }
+    </script>
+</body>
+</html>

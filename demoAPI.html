@@ -1,34 +1,119 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <title>天氣預報 (36 小時)</title>
-  </head>
-  <body>
-    <div>
-      <div id="mymessage"></div>
-      <h1>未來 36 小時各區天氣預報</h1>
-      <div id="weatherList">載入中…</div>
-      
-    </div>
-    <script> //url要改
-      const apiUrl2 = 'http://localhost:8000/api/hello';
-      const mymessage =document.getElementById('mymessage');
-      async function loadMessage() {
-        try {
-          const resp = await fetch(apiUrl2); //GET
-          if (!resp.ok) throw new Error('HTTP 錯誤:'+resp.status);
-          const data =  await resp.text();
-          if (!data) {
-            weatherList.textContent = '未取得任何資料';
-            return;
-          }
-          mymessage.textContent = data;
-        }catch(err) {
-          mymessage.textContent = '載入失敗：' + err.message;
-        }
-      }
-      loadMessage()
-    </script>
-  </body>
-</html>
+<head>
+  <meta charset="UTF-8" />
+  <title>資料查詢</title>
+  <style>
+    .hidden {
+      display: none;
+    }
+    .tab-btn {
+      margin-right: 10px;
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #0078D4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    .tab-btn-group {
+      text-align: left;
+      margin-bottom: 20px;
+      padding: 0;
+    }
+    body {
+      background: linear-gradient(to bottom,#d0f0ff, #ffe0f7);
+      color: #4b0082;
+      font-family: 'Papyrus', fantasy;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 3em;
+      color: #ff69b4;
+      text-align: center;
+    }
+    h2 {
+      font-size: 2em;
+      color: #980780;
+      text-align: center;
+    }
+    select {
+      font-size: 1.2em;
+      margin: 20px;
+      padding: 5px 10px;
+    }
 
+    table {
+      border-collapse: collapse;
+      width: 60%;
+      margin: 10px auto 0;
+    }
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background-color: #992bc4;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>資料表切換展示</h1>
+  <div>
+    <button class="tab-btn" onclick="loadTable(apiattendance, container1);">出勤資料</button>
+    <button class="tab-btn" onclick="loadTable(apibooks, container1);">書本資料</button>
+    <button class="tab-btn" onclick="loadTable(apibooktype, container1);">書籍種類</button>
+    <button class="tab-btn" onclick="loadTable(apiempoloyees, container1);">員工資料</button>
+    <button class="tab-btn" onclick="loadTable(apimembers, container1);">會員資料</button>
+  </div>
+  <div>
+    <div id="tableContainer">載入中…</div>
+  </div>
+
+  <script>
+    const apiattendance = 'http://localhost:8000/api/attendance';
+    const apibooks = 'http://localhost:8000/api/books';
+    const apibooktype = 'http://localhost:8000/api/booktype';
+    const apiempoloyees = 'http://localhost:8000/api/empoloyees';
+    const apimembers = 'http://localhost:8000/api/members';
+    const container1 = document.getElementById('tableContainer');
+
+
+    async function loadTable(url, todiv) {
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`HTTP 錯誤: ${resp.status}`);
+        const data = await resp.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          container.textContent = '沒有資料';
+          return;
+        }
+        // 產生表格
+        let table = '<table><thead><tr>';
+        // 自動產出表頭
+        const keys = Object.keys(data[0]);
+        keys.forEach(k => {
+          table += `<th>${k}</th>`;
+        });
+        table += '</tr></thead><tbody>';
+        // 每一列資料
+        data.forEach(row => {
+          table += '<tr>';
+          keys.forEach(k => {
+            table += `<td>${row[k]}</td>`;
+          });
+          table += '</tr>';
+        });
+        table += '</tbody></table>';
+        todiv.innerHTML = table;
+      } catch (err) {
+        todiv.textContent = '載入失敗：' + err.message;
+      }
+    }
+
+  </script>
+</body>
+</html>
