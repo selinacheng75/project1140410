@@ -26,7 +26,6 @@ public class server {
         server.createContext("/api/insertdata", new InsertDataHandler());
 
 
-
         server.createContext("/chat/send", new ChatHandler.SendHandler());
         server.createContext("/chat/messages", new ChatHandler.MessageHandler());
         server.createContext("/postdemo",new postdemo());
@@ -142,12 +141,26 @@ public class server {
 
                     exchange.sendResponseHeaders(200, -1);
                     break;
-                case "products":
-                    String pname = map.get("pname");
+                case "books":
+                    String bookname = map.get("bookname");
+                    String btype = map.get("btype");
                     String price = map.get("price");
-                    int pid = DBConnect.getNextId("products", "idProducts");
-                    int result2 = DBConnect.executeUpdate("INSERT INTO products (idProducts, ProductName,Price,CategoryID) VALUES (?, ?,?,1)", pid,
-                pname,Integer.parseInt(price));
+                    String stock = map.get("stock");
+                    String productdate = map.get("productdate");
+                    String areasection = map.get("areasection");
+                    int bookid = DBConnect.getNextId("books", "bookid");
+                    int result2 = DBConnect.executeUpdate("INSERT INTO books (bookid, bookname,btype,price,stock,productdate,areasection) VALUES (?, ?,?,?,?,?,?)", bookid,bookname,btype,price,stock,productdate,areasection);
+                    exchange.sendResponseHeaders(200, -1);
+                    break;
+                case "renttickets":
+                    String tmemberid = map.get("memberid");
+                    String tbookid = map.get("bookid");
+                    String rentdate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    String empoloyee = map.get("empoloyee");
+                    int backday = 3;
+                    String event = map.get("event");
+                    int rentid = DBConnect.getNextId("renttickets", "rentid");
+                    int result3 = DBConnect.executeUpdate("INSERT INTO renttickets (rentid, memberid, bookid, rentdate, empoloyee, backday, event) VALUES (?, ?, ?, ?, ?, ?, ?)",rentid, tmemberid, tbookid, rentdate, empoloyee, backday, event);
                     exchange.sendResponseHeaders(200, -1);
                     break;
                 default:
