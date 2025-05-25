@@ -68,6 +68,7 @@
     <button class="tab-btn" onclick="loadTable(apibooktype, container1);">書籍種類</button>
     <button class="tab-btn" onclick="loadTable(apiempoloyees, container1);">員工資料</button>
     <button class="tab-btn" onclick="loadTable(apimembers, container1);">會員資料</button>
+    <button class="tab-btn" onclick="loadTable(apirenttickets, container1);">租借資料</button>
   </div>
   <div>
     <div id="tableContainer">載入中…</div>
@@ -80,6 +81,8 @@
     const apiempoloyees = 'http://localhost:8000/api/empoloyees';
     const apimembers = 'http://localhost:8000/api/members';
     const apievents = 'http://localhost:8000/api/events';
+    const apirenttickets = 'http://localhost:8000/api/renttickets';
+
     const container1 = document.getElementById('tableContainer');
 
 
