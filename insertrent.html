@@ -10,24 +10,84 @@
   <input type="text" id="tmemberid">
   <label for="tbookid">書本編號：</label>
   <input type="text" id="tbookid">
-  <label for="empoloyee">負責人員編號：</label>
-  <input type="text" id="empoloyee">
-  <label for="event">活動代碼：</label>
-  <input type="text" id="event">
+  <label for="empoloyees">負責人員編號：</label>
+  <select id="empoloyees"></select>
+  <label for="events">活動代碼：</label>
+  <select id="events"></select>
   <button onclick="insertpost()">新增</button>
   <script>
+    const apiempoloyees = 'http://localhost:8000/api/empoloyees';
+    const apievents = 'http://localhost:8000/api/events';
+
+    const empoloyeesSelect = document.getElementById("empoloyees"); 
+    const eventsSelect = document.getElementById("events"); 
+
+    async function empoloyeesAdd() {
+      try {
+        const resp = await fetch(apiempoloyees);
+        if (!resp.ok) throw new Error(`HTTP 錯誤: ${resp.status}`);
+        const data = await resp.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+          let op = document.createElement("option");
+          op.textContent = "無資料";
+          empoloyeesSelect.append(op);
+          return;
+        }
+
+        data.forEach(row => {
+          let op = document.createElement("option");
+          op.value = row["empoloyeeid"];
+          op.textContent = row["ename"];
+          empoloyeesSelect.append(op);
+        });
+      } catch (err) {
+        console.error("載入書籍類型失敗：", err);
+      }
+    }
+
+    // ✅ 正確呼叫
+    empoloyeesAdd();
+
+    async function eventsAdd() {
+      try {
+        const resp = await fetch(apievents);
+        if (!resp.ok) throw new Error(`HTTP 錯誤: ${resp.status}`);
+        const data = await resp.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+          let op = document.createElement("option");
+          op.textContent = "無資料";
+          eventsSelect.append(op);
+          return;
+        }
+
+        data.forEach(row => {
+          let op = document.createElement("option");
+          op.value = row["eventid"];
+          op.textContent = row["eventname"];
+          eventsSelect.append(op);
+        });
+      } catch (err) {
+        console.error("載入書籍類型失敗：", err);
+      }
+    }
+
+    // ✅ 正確呼叫
+    eventsAdd();
+    
     function insertpost() {
       //姓名正確的
       let tmemberid = document.getElementById("tmemberid").value;
       let tbookid = document.getElementById("tbookid").value;
-      let empoloyee = document.getElementById("empoloyee").value;
+      let empoloyees = document.getElementById("empoloyees").value;
       let event = document.getElementById("event").value;
-      if (tmemberid && tbookid && empoloyee && event) {
+      if (tmemberid && tbookid && empoloyees && event) {
         //格式檢查
         fetch('http://localhost:8000/api/insertdata', {
           method: 'POST',
           mode: 'cors', // ✅ 很關鍵
-          body: JSON.stringify({ table:"renttickets", memberid: tmemberid , bookid: tbookid , empoloyee: empoloyee , event: event}),
+          body: JSON.stringify({ table:"renttickets", memberid: tmemberid , bookid: tbookid , empoloyee: empoloyees , event: event}),
         })
       } else {
         alert("請輸入資料");

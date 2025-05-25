@@ -22,6 +22,7 @@ public class server {
         server.createContext("/api/booktype", new TableDataHandler("select * from booktype"));
         server.createContext("/api/empoloyees", new TableDataHandler("select * from empoloyees"));
         server.createContext("/api/members", new TableDataHandler("select * from members"));
+        server.createContext("/api/events", new TableDataHandler("select * from events"));
         
         server.createContext("/api/insertdata", new InsertDataHandler());
 
