@@ -169,7 +169,7 @@ public class ShopMenu {
    private static void returnrent() {
        System.out.print("請輸入租借記錄的代號：");
        String returnnew = scanner.nextLine();
-       String query = "UPDATE renttickets SET `return` = 1 WHERE rentid = ?";
+       String query = "UPDATE renttickets SET `backday` = 1 WHERE rentid = ?";
        int result = DBConnect.executeUpdate(query, returnnew);
    }
 

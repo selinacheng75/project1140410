@@ -25,7 +25,15 @@ public class server {
         server.createContext("/api/events", new TableDataHandler("select * from events"));
         server.createContext("/api/renttickets", new TableDataHandler("select * from renttickets"));
         
+        server.createContext("/api/revenue", new TableDataHandler("select * from revenue"));
+        server.createContext("/api/popularbook", new TableDataHandler("select * from popularbook"));
+        server.createContext("/api/notreturnyet", new TableDataHandler("select * from notreturnyet"));
+        server.createContext("/api/salarylist", new TableDataHandler("select * from salarylist"));
+        server.createContext("/api/topvip", new TableDataHandler("select * from topvip"));
+
         server.createContext("/api/insertdata", new InsertDataHandler());
+        server.createContext("/api/updatedata", new UpdateDataHandler());
+
 
 
         server.createContext("/chat/send", new ChatHandler.SendHandler());
@@ -157,12 +165,88 @@ public class server {
                 case "renttickets":
                     String tmemberid = map.get("memberid");
                     String tbookid = map.get("bookid");
-                    String rentdate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    String rentdate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                     String empoloyee = map.get("empoloyee");
-                    int backday = 3;
+                    int backday = 0;
                     String event = map.get("event");
                     int rentid = DBConnect.getNextId("renttickets", "rentid");
                     int result3 = DBConnect.executeUpdate("INSERT INTO renttickets (rentid, memberid, bookid, rentdate, empoloyee, backday, event) VALUES (?, ?, ?, ?, ?, ?, ?)",rentid, tmemberid, tbookid, rentdate, empoloyee, backday, event);
+                    exchange.sendResponseHeaders(200, -1);
+                    break;
+                default:
+                    break;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            String response = "{\"error\": \"" + e.getMessage().replace("\"", "\\\"") + "\"}";
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+            exchange.getResponseBody().write(response.getBytes());
+            exchange.getResponseBody().close();
+        }
+        }
+    }
+    static class UpdateDataHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+                // ✅ 處理 CORS 預檢請求（OPTIONS）
+        if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+            exchange.sendResponseHeaders(204, -1); // 204 No Content
+            return;
+        }
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");    try{
+            String body = new BufferedReader( new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)).lines().collect(Collectors.joining());
+            Map<String,String> map = DBConnect.parseJson(body);
+            String targetTable = map.get("table"); 
+            switch(targetTable){
+                case "empoloyees":
+                    String empoloyeeid = map.get("empoloyeeid");
+                    String ename = map.get("ename");
+                    String emobile = map.get("emobile");
+                    String ehireddate = map.get("ehireddate");
+                    String esalary = map.get("esalary");
+                    String absent  = map.get("absent");
+                    String state = map.get("state");
+                    
+                    int result = DBConnect.executeUpdate("UPDATE `empoloyees` SET `ename`= ?,`emobile` = ?,`ehireddate`= ?,`esalary`= ?,`absent`= ?,`state`= ? WHERE (`empoloyeeid` = ?)" , ename,emobile,ehireddate,esalary,absent,state,empoloyeeid);
+
+                    exchange.sendResponseHeaders(200, -1);
+                    break;
+                case "books":
+                    String bookid = map.get("bookid");
+                    String bookname = map.get("bookname");
+                    String btype = map.get("btype");
+                    String price2 = map.get("price");
+                    String stock = map.get("stock");
+                    String productdate  = map.get("productdate");
+                    String areasection = map.get("areasection");
+                    
+                    int result2 = DBConnect.executeUpdate("UPDATE `books` SET `bookname`= ?,`btype` = ?,`price`= ?,`stock`= ?,`productdate`= ?,`areasection`= ? WHERE (`bookid` = ?)" , bookname,btype,price2,stock,productdate,areasection,bookid);
+                    exchange.sendResponseHeaders(200, -1);
+                    break;
+                case "members":
+                    String memberid = map.get("memberid");
+                    String membername = map.get("membername");
+                    String mmobile = map.get("mobile");
+                    String deposit = map.get("deposit");
+                    
+                    int result3 = DBConnect.executeUpdate("UPDATE `members` SET `membername`= ?,`mobile` = ?,`deposit`= ?  WHERE (`memberid` = ?)" , membername,mmobile,deposit,memberid);
+                    exchange.sendResponseHeaders(200, -1);
+                    break;
+                case "renttickets":
+                    String rentid = map.get("rentid");
+                    String memberid4 = map.get("memberid");
+                    String bookid4 = map.get("bookid");
+                    String rentdate4 = map.get("rentdate");
+                    String empoloyee4 = map.get("empoloyee");
+                    String backday = map.get("backday");
+                    String event4 = map.get("event");
+                
+                    int result4 = DBConnect.executeUpdate("UPDATE `renttickets` SET `memberid`= ?,`bookid` = ?,`rentdate`= ? ,`empoloyee`= ? ,`backday`= ? ,`event`= ?  WHERE (`rentid` = ?)" , memberid4,bookid4,rentdate4,empoloyee4,backday,event4,rentid);
                     exchange.sendResponseHeaders(200, -1);
                     break;
                 default:

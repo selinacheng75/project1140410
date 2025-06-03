@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>書本租借系統</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+
+<body>
+
+
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+
+    <div class="sidebar" id="sidebar">
+    <h2>功能選單</h2>
+    <a href="sidebar.html?target=insertrent.html">📄 新增租借記錄</a>
+    <a href="sidebar.html?target=backbook.html">🔁 還書記錄</a>
+    <a href="sidebar.html?target=insertmember.html">👤 新增會員</a>
+    <a href="sidebar.html?target=insertbook.html">📚 新增書籍</a>
+    <a href="sidebar.html?target=demoAPI.html">🔍 查詢資料</a>
+    <a href="sidebar.html?target=demoAPI3.html">🔍 資料異動</a>
+    <a href="sidebar.html?target=demoAPI2.html">📊 後台報表</a>
+
+    </div>
+
+
+    <div class="content" id="mainContent">
+        <h1>歡迎使用系統</h1>
+        <p>請從左側選單選擇功能。</p>
+    </div>
+
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+
+        function getQueryParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+
+        async function loadPage(fileName) {
+            try {
+                const response = await fetch(fileName);
+                if (!response.ok) throw new Error('載入失敗');
+                const html = await response.text();
+
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+
+                const content = document.getElementById('mainContent');
+                content.innerHTML = '';
+
+
+                // 移除舊 script（標記為 data-dynamic 的）
+                document.querySelectorAll('script[data-dynamic]').forEach(s => s.remove());
+
+
+               // 插入非 script 元素
+        Array.from(doc.head.querySelectorAll('style')).forEach(style => {
+            document.head.appendChild(style.cloneNode(true));
+        });
+
+        Array.from(doc.body.childNodes).forEach(node => {
+            if (node.tagName !== 'SCRIPT') {
+                content.appendChild(document.importNode(node, true));
+            }
+        });
+                // 等 DOM 實際插入後，再動態掛載 script
+                const scripts = doc.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    if (oldScript.src) {
+                        newScript.src = oldScript.src;
+                    } else {
+                        newScript.textContent = oldScript.textContent;
+                    }
+                    newScript.setAttribute('data-dynamic', 'true');
+                    // 注意：不是加到 document.body，而是 mainContent 內！
+                    // 這樣才保證 DOM 存在再執行（尤其是 document.getElementById）
+                    content.appendChild(newScript);
+                });
+
+
+                if (window.innerWidth <= 768) toggleSidebar(); // 手機收 sidebar
+            } catch (err) {
+                document.getElementById('mainContent').innerHTML =
+                    `<p style="color:red;">⚠ 無法載入 ${fileName}：${err.message}</p>`;
+            }
+        }
+
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const target = getQueryParam('target');
+            if (target) {
+            loadPage(target);
+        }
+        });
+
+
+    </script>
+
+
+
+
+</body>
+
+
+</html>
+

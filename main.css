@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "微軟正黑體", sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: #6a4fbfdd;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 24px;
+            text-shadow: 1px 1px 3px #00000066;
+        }
+
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            color: white;
+            transition: background 0.2s, transform 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar a:hover {
+            background: #8f67fccc;
+            transform: translateX(5px);
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #ffffffcc;
+            margin: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            animation: floatBox 3s ease-in-out infinite;
+        }
+
+        .hamburger {
+            display: none;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: #6a4fbf;
+            z-index: 10;
+        }
+
+        @keyframes floatBox {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                height: 100vh;
+                z-index: 5;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .content {
+                margin: 80px 20px 20px;
+            }
+        }
+
+        button, .btn {
+            background-color: #5b9dff;
+            color: white;
+            padding: 8px 16px;     /* 🔽 減少內距，按鈕更小 */
+            border: none;
+            border-radius: 8px;    /* 🔽 圓角略小，顯得更緊湊 */
+            font-size: 14px;       /* 已設定，維持即可 */
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  /* 🔽 陰影小一點，看起來更簡潔 */    
+        }
+
+        button:hover, .btn:hover {
+            background-color: #3a7be0;
+            transform: scale(1.05);
+        }
+
+        .inner-container {
+            background: #ffffffcc;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>歸還書籍</title>
+</head>
+<body>
+  <h2>歸還書籍</h2>
+  <label for="trentid">租借編號：</label>
+  <input type="text" id="trentid">
+  <button onclick="returnBook()">確定歸還</button>
+
+  <script>
+    function returnBook() {
+      const rentid = document.getElementById("trentid").value;
+      if (!rentid) {
+        alert("請輸入租借編號");
+        return;
+      }
+
+      fetch("http://localhost:8000/api/updatedata", {
+        method: "PUT",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          table: "renttickets",
+          condition: { rentticketid: rentid },
+          update: { backday: 1 }
+        })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("更新失敗");
+        return res.json();
+      })
+      .then(data => {
+        alert("✅ 歸還成功！");
+      })
+      .catch(err => {
+        console.error(err);
+        alert("❌ 歸還失敗：" + err.message);
+      });
+    }
+  </script>
+</body>
+</html>

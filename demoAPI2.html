@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>資料查詢</title>
+  <title>統計資料查詢</title>
   <style>
     .hidden {
       display: none;
@@ -61,27 +61,26 @@
   </style>
 </head>
 <body>
-  <h1>資料表查詢</h1>
+  <h1>資料統計查詢</h1>
   <div>
-    <button class="tab-btn" onclick="loadTable(apiattendance, container1);">出勤資料</button>
-    <button class="tab-btn" onclick="loadTable(apibooks, container1);">書本資料</button>
-    <button class="tab-btn" onclick="loadTable(apibooktype, container1);">書籍種類</button>
-    <button class="tab-btn" onclick="loadTable(apiempoloyees, container1);">員工資料</button>
-    <button class="tab-btn" onclick="loadTable(apimembers, container1);">會員資料</button>
-    <button class="tab-btn" onclick="loadTable(apirenttickets, container1);">租借資料</button>
+    <button class="tab-btn" onclick="loadTable(apirevenue, container1);">營收資料</button>
+    <button class="tab-btn" onclick="loadTable(apipopularbook, container1);">熱門書籍</button>
+    <button class="tab-btn" onclick="loadTable(apinotreturnyet, container1);">未歸還記錄</button>
+    <button class="tab-btn" onclick="loadTable(apisalarylist, container1);">員工薪資</button>
+    <button class="tab-btn" onclick="loadTable(apitopvip, container1);">VIP排行</button>
+
   </div>
   <div>
     <div id="tableContainer">載入中…</div>
   </div>
 
   <script>
-    const apiattendance = 'http://localhost:8000/api/attendance';
-    const apibooks = 'http://localhost:8000/api/books';
-    const apibooktype = 'http://localhost:8000/api/booktype';
-    const apiempoloyees = 'http://localhost:8000/api/empoloyees';
-    const apimembers = 'http://localhost:8000/api/members';
-    const apievents = 'http://localhost:8000/api/events';
-    const apirenttickets = 'http://localhost:8000/api/renttickets';
+    const apirevenue = 'http://localhost:8000/api/revenue';
+    const apipopularbook = 'http://localhost:8000/api/popularbook';
+    const apinotreturnyet = 'http://localhost:8000/api/notreturnyet';
+    const apisalarylist = 'http://localhost:8000/api/salarylist';
+    const apitopvip = 'http://localhost:8000/api/topvip';
+
 
     const container1 = document.getElementById('tableContainer');
 
@@ -89,7 +88,6 @@
     async function loadTable(url, todiv) {
       try {
         const resp = await fetch(url);
-        
         if (!resp.ok) throw new Error(`HTTP 錯誤: ${resp.status}`);
         const data = await resp.json();
         if (!Array.isArray(data) || data.length === 0) {
