@@ -170,9 +170,34 @@ public class server {
                     int backday = 0;
                     String event = map.get("event");
                     int rentid = DBConnect.getNextId("renttickets", "rentid");
-                    int result3 = DBConnect.executeUpdate("INSERT INTO renttickets (rentid, memberid, bookid, rentdate, empoloyee, backday, event) VALUES (?, ?, ?, ?, ?, ?, ?)",rentid, tmemberid, tbookid, rentdate, empoloyee, backday, event);
+
+                try {
+                    ResultSet rsPrice = DBConnect.selectQuery("SELECT price FROM books WHERE bookid = ?", tbookid);
+                    if (!rsPrice.next()) throw new Exception("查無書籍價格");
+                    double price2 = Double.parseDouble(rsPrice.getString("price"));
+
+                    ResultSet rsDepo = DBConnect.selectQuery("SELECT deposit FROM members WHERE memberid = ?", tmemberid);
+                    if (!rsDepo.next()) throw new Exception("查無會員存款");
+                    double deposit2 = Double.parseDouble(rsDepo.getString("deposit"));
+
+                    if (deposit2 < price2) throw new Exception("存款不足，無法借書");
+
+                    int result5 = DBConnect.executeUpdate("UPDATE members SET deposit = deposit - ? WHERE memberid = ?",price2, tmemberid);
+
+                    int result6 = DBConnect.executeUpdate("INSERT INTO renttickets (rentid, memberid, bookid, rentdate, empoloyee, backday, event) VALUES (?, ?, ?, ?, ?, ?, ?)",rentid, tmemberid, tbookid, rentdate, empoloyee, backday, event);
+
                     exchange.sendResponseHeaders(200, -1);
-                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    String response = "{\"error\": \"" + e.getMessage().replace("\"", "\\\"") + "\"}";
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(500, response.getBytes().length);
+                    exchange.getResponseBody().write(response.getBytes());
+                    exchange.getResponseBody().close();
+                }
+                break;
+
+
                 default:
                     break;
             }
