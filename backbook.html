@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <title>資料表更新</title>
   <style>
-    .hidden {
-      display: none;
-    }
     .tab-btn {
       margin-right: 10px;
       padding: 6px 12px;
@@ -16,11 +13,7 @@
       border: none;
       border-radius: 4px;
     }
-    .tab-btn-group {
-      text-align: left;
-      margin-bottom: 20px;
-      padding: 0;
-    }
+
     body {
       background: linear-gradient(to bottom,#d0f0ff, #ffe0f7);
       color: #4b0082;
@@ -28,18 +21,10 @@
       text-align: center;
       padding: 50px;
     }
+
     h1 {
       font-size: 3em;
       color: #ff69b4;
-    }
-    h2 {
-      font-size: 2em;
-      color: #980780;
-    }
-    select {
-      font-size: 1.2em;
-      margin: 20px;
-      padding: 5px 10px;
     }
 
     table {
@@ -47,60 +32,28 @@
       width: 60%;
       margin: 10px auto 0;
     }
+
     th, td {
       border: 1px solid #ccc;
       padding: 8px;
     }
+
     th {
       background-color: #992bc4;
       color: white;
-    }
-
-    #editFormContainer {
-      background-color: #fff8fc;
-      border: 2px solid #980780;
-      padding: 20px;
-      margin: 30px auto;
-      width: 60%;
-      border-radius: 10px;
-    }
-
-    #editForm div {
-      margin-bottom: 10px;
-      text-align: left;
-    }
-
-    #editForm label {
-      display: inline-block;
-      width: 100px;
-      font-weight: bold;
-    }
-
-    #editForm input {
-      width: 60%;
-      padding: 5px;
     }
   </style>
 </head>
 <body>
   <h1>資料表更新</h1>
   <div>
-    <button class="tab-btn" onclick="loadTable(apirenttickets, container1);">書籍歸還</button>
-
+    <button class="tab-btn" onclick="loadTable(apinotreturnyet, container1);">書籍歸還</button>
   </div>
 
   <div id="tableContainer">載入中…</div>
 
-  <div id="editFormContainer" class="hidden">
-    <h2>編輯資料</h2>
-    <form id="editForm"></form>
-    <button type="button" onclick="submitEdit()">歸還</button>
-    <button onclick="cancelEdit()">取消</button>
-  </div>
-
   <script>
-    const apirenttickets = 'http://localhost:8000/api/renttickets';
-
+    const apinotreturnyet = 'http://localhost:8000/api/notreturnyet';
     const container1 = document.getElementById('tableContainer');
 
     let currenurl = '';
@@ -111,13 +64,6 @@
       currenttodiv = todiv;
 
       try {
-        let tablename = '';
-        switch (url) {
-          case apirenttickets:
-            tablename = 'renttickets';
-            break;
-        }
-
         const resp = await fetch(url);
         if (!resp.ok) throw new Error(`HTTP 錯誤: ${resp.status}`);
         const data = await resp.json();
@@ -136,12 +82,9 @@
         table += '</tr></thead><tbody>';
 
         data.forEach(row => {
-          const deletePayload = JSON.stringify({ ...row, state: -1, table: tablename });
-          const editPayload = JSON.stringify(row).replace(/"/g, '&quot;');
           table += '<tr>';
           table += `<td>
-            <button onclick='editRow(${editPayload}, "${tablename}")'>歸還</button>
-            <button onclick='updaterow(${deletePayload})'>刪除</button>
+            <button onclick='returnBook(${row.rentid})'>歸還</button>
           </td>`;
           keys.forEach(k => {
             table += `<td>${row[k]}</td>`;
@@ -153,78 +96,35 @@
         todiv.innerHTML = table;
       } catch (err) {
         todiv.textContent = '載入失敗：' + err.message;
+        console.error("載入資料錯誤：", err);
       }
     }
 
-    function updaterow(returnbody) {
-      fetch('http://localhost:8000/api/updatedata', {
-        method: 'POST',
-        mode: 'cors',
-        body: JSON.stringify(returnbody),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(() => {
-        loadTable(currenurl, currenttodiv);
-      });
-    }
+    function returnBook(rentid) {
+      console.log("送出歸還請求 rentid =", rentid);  // 除錯印出
 
-    function editRow(rowData, tableName) {
-      const form = document.getElementById('editForm');
-      const container = document.getElementById('editFormContainer');
-      form.innerHTML = '';
-
-      for (const key in rowData) {
-        if (key === 'state') continue;
-        const value = rowData[key];
-        if (key === 'id') {
-          form.innerHTML += `<input type="hidden" name="${key}" value="${value}">`;
-        } else {
-          form.innerHTML += `
-            <div>
-              <label>${key}:</label>
-              <input type="text" name="${key}" value="${value}">
-            </div>`;
-        }
-      }
-
-      form.dataset.table = tableName;
-      container.classList.remove('hidden');
-    }
-
-    function submitEdit() {
-        console.log("送出修改被呼叫");
-      const form = document.getElementById('editForm');
-      const formData = new FormData(form);
-      const obj = {};
-        
-      formData.forEach((value, key) => {
-        obj[key] = value;
-      });
-
-      obj.table = form.dataset.table;
-      obj.state = 1;
-
-      console.log("即將送出的更新資料：", obj);
+      const payload = {
+        rentid: rentid,
+        table: 'renttickets' // 後端支援的表格名
+      };
 
       fetch('http://localhost:8000/api/updatedata', {
         method: 'POST',
         mode: 'cors',
-        body: JSON.stringify(obj),
         headers: {
           'Content-Type': 'application/json'
-        }
-
-      }).then(() => {
-            console.log("成功送出 fetch 更新");
-      }).then(() => {
-             document.getElementById('editFormContainer').classList.add('hidden');
-            loadTable(currenurl, currenttodiv);
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("更新失敗，狀態碼：" + response.status);
+        alert("歸還成功！");
+        loadTable(currenurl, currenttodiv); 
+      })
+      .catch(err => {
+        alert("歸還失敗：" + err.message);
+        console.error("歸還錯誤：", err);
       });
-    }
-
-    function cancelEdit() {
-      document.getElementById('editFormContainer').classList.add('hidden');
     }
   </script>
 </body>

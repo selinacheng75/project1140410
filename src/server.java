@@ -24,7 +24,7 @@ public class server {
         server.createContext("/api/members", new TableDataHandler("select * from members"));
         server.createContext("/api/events", new TableDataHandler("select * from events"));
         server.createContext("/api/renttickets", new TableDataHandler("select * from renttickets"));
-        
+
         server.createContext("/api/revenue", new TableDataHandler("select * from revenue"));
         server.createContext("/api/popularbook", new TableDataHandler("select * from popularbook"));
         server.createContext("/api/notreturnyet", new TableDataHandler("select * from notreturnyet"));
@@ -239,14 +239,9 @@ public class server {
                     break;
                 case "renttickets":
                     String rentid = map.get("rentid");
-                    String memberid4 = map.get("memberid");
-                    String bookid4 = map.get("bookid");
-                    String rentdate4 = map.get("rentdate");
-                    String empoloyee4 = map.get("empoloyee");
-                    String backday = map.get("backday");
-                    String event4 = map.get("event");
                 
-                    int result4 = DBConnect.executeUpdate("UPDATE `renttickets` SET `memberid`= ?,`bookid` = ?,`rentdate`= ? ,`empoloyee`= ? ,`backday`= ? ,`event`= ?  WHERE (`rentid` = ?)" , memberid4,bookid4,rentdate4,empoloyee4,backday,event4,rentid);
+                    int result4 = DBConnect.executeUpdate("UPDATE `renttickets` SET `backday` = 1 WHERE `rentid` = ?", rentid);
+
                     exchange.sendResponseHeaders(200, -1);
                     break;
                 default:
